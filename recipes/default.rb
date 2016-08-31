@@ -19,6 +19,21 @@
 #
 include_recipe "chocolatey"
 
+if node['chocolatey-installer']['no_checksums'] == true
+  powershell_script 'Skip checking of checksums for all chocolatey packages' do
+    code <<-EOH
+    choco feature enable -n allowEmptyChecksums
+    EOH
+  end
+end
+
 node['chocolatey-installer']['packages'].each do |pack|
-  chocolatey pack
+  opts = ''
+  if node['chocolatey-installer']['no_checksums'] == true
+    opts += '--allow-empty-checksums'
+  end
+  
+  chocolatey pack do
+    options opts
+  end
 end
