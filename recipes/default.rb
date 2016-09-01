@@ -19,21 +19,32 @@
 #
 include_recipe "chocolatey"
 
-if node['chocolatey-installer']['no_checksums'] == true
-  powershell_script 'Skip checking of checksums for all chocolatey packages' do
-    code <<-EOH
-    choco feature enable -n allowEmptyChecksums
-    EOH
+# install choco first to get commandline option
+unless node['chocolatey-installer']['packages'].empty?
+  chocolatey_package 'chocolatey' do
+    action :install
+  end
+
+  if node['chocolatey-installer']['no_checksums'] == true
+    powershell_script 'Skip checking of checksums for all chocolatey packages' do
+      code <<-EOH
+        $choco = [System.Environment]::GetEnvironmentVariable('ChocolateyInstall', 'MACHINE')
+        $cmd = "& $choco\\bin\\choco.exe feature enable -n allowEmptyChecksums"        
+        Invoke-Expression $cmd
+      EOH
+    end
   end
 end
 
+# install custom packages
 node['chocolatey-installer']['packages'].each do |pack|
   opts = ''
   if node['chocolatey-installer']['no_checksums'] == true
     opts += '--allow-empty-checksums'
   end
   
-  chocolatey pack do
+  chocolatey_package pack do
+    action :install
     options opts
   end
 end
