@@ -9,7 +9,6 @@
     "windows": ">= 0.0.0"
   },
   "dependencies": {
-    "windows": ">= 0.0.0",
     "chocolatey": ">= 0.0.0"
   },
   "recommendations": {
@@ -28,5 +27,5 @@
   },
   "recipes": {
   },
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
