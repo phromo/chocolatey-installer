@@ -19,12 +19,7 @@
 #
 include_recipe "chocolatey"
 
-# install choco first to get commandline option
 unless node['chocolatey-installer']['packages'].empty?
-  chocolatey_package 'chocolatey' do
-    action :install
-  end
-
   if node['chocolatey-installer']['no_checksums'] == true
     powershell_script 'Skip checking of checksums for all chocolatey packages' do
       code <<-EOH
